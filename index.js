@@ -13,6 +13,9 @@ let yourLossesEl = document.getElementById("your-losses")
 let youCashEl = document.getElementById("your-cash")
 let casinoCashEl = document.getElementById("casino-cash")
 let casinoHandEl = document.getElementById("casino-sum")
+let dealBtn = document.getElementById("start-btn")
+let hitBtn = document.getElementById("new-card-btn")
+let holdBtn = document.getElementById("hold-btn")
 let sum = 0
 let wins = 0
 let losses = 0
@@ -52,9 +55,12 @@ function getRandomNumber() {
 
 
 function startGame() {
-    if (isBroke === true & canClickDeal === true) {
+    if (isBroke === true) {
+        messageEl.tabIndex = "You've already started the game"
 
     } else {
+        dealBtn.style.visibility = "hidden";
+        canClickDeal = false
         hasStarted = true
         hasBlackJack = false
         roundStarted = true
@@ -70,6 +76,22 @@ function startGame() {
 
 }
 
+function newRound() {
+    cards = []
+    sum = "Sum :"
+    youCashEl.textContent = cash
+    casinoCashEl.textContent = casinoCash
+    cardsEl.textContent = "Cards: " + cards
+    sumEl.textContent = sum
+    messageEl.textContent = "Click 'deal' to start"
+    casinoHandEl.textContent = "Casino's hand: "
+    dealBtn.style.visibility = "visible";
+    hitBtn.style.visibility = "visible";
+    holdBtn.style.visibility = "visible";
+
+}
+
+
 function hold() {
     let casinoSum = getRandomNumber ()
     casinoHandEl.textContent = "Casino's hand: " + casinoSum
@@ -82,18 +104,28 @@ function hold() {
         youCashEl.textContent = cash
         casinoCashEl.textContent = casinoCash
 
+        dealBtn.style.visibility = "hidden";
+        hitBtn.style.visibility = "hidden";
+        holdBtn.style.visibility = "hidden";
+
     } else if (casinoSum < sum && sum <= 21) {
           messageEl.textContent = "Winner winner! Here's $200"
           cash += userWin
           youCashEl.textContent = cash
           youCashEl.textContent = cash
           casinoCashEl.textContent = casinoCash
+
+          dealBtn.style.visibility = "hidden";
+          hitBtn.style.visibility = "hidden";
+          holdBtn.style.visibility = "hidden";
     } else if (cash <= 0) {
         messageEl.textContent = "YOU'RE BROKE GAME OVER"
     }
     
     else if (casinoSum === sum) {
         messageEl.textContent = "Wow, it's a tie..!"
+        hitBtn.style.visibility = "hidden";
+        holdBtn.style.visibility = "hidden";
     }
     
     else {
@@ -123,9 +155,9 @@ if (cash === 0) {
 } else {
     if (sum <= 20 && sum >= 18) {
         message = "OOOooohhhh...... Hit or hold?"
-    } else if (sum <= 10) {
+    } else if (sum <= 15) {
         message = "I wouldn't hold that.."
-    } else if (sum >= 10 && sum <= 18) {
+    } else if (sum >= 16 && sum <= 18) {
         message = "That's a tough one.."
     } else if (sum === 21) {
         message = "Blackjack! You win $200 🥳"
@@ -134,6 +166,9 @@ if (cash === 0) {
         casinoCash += casinoLoss
         youCashEl.textContent = cash
         casinoCashEl.textContent = casinoCash
+        dealBtn.style.visibility = "hidden";
+        hitBtn.style.visibility = "hidden";
+        holdBtn.style.visibility = "hidden";
     } else  {
         message = "You lose! 😭 That's -$100"
         cash += userLoss
@@ -141,6 +176,9 @@ if (cash === 0) {
         isAlive = false
         youCashEl.textContent = cash
         casinoCashEl.textContent = casinoCash
+        dealBtn.style.visibility = "hidden";
+        hitBtn.style.visibility = "hidden";
+        holdBtn.style.visibility = "hidden";
 
     }
 
@@ -167,9 +205,9 @@ function newCard() {
 function newGame() {
     isBroke = false
     cash = 1000
+    casinoCash = 5000
     cards = []
     sum = "Sum :"
-    casinoCash = 5000
     youCashEl.textContent = cash
     casinoCashEl.textContent = casinoCash
     cardsEl.textContent = "Cards: " + cards
