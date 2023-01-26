@@ -75,7 +75,7 @@ function hold() {
     casinoHandEl.textContent = "Casino's hand: " + casinoSum
     userHoldingHand = true
 
-if (userHoldingHand === true) {
+if (userHoldingHand === false) {
 
 } else {
     if (casinoSum > sum) {
