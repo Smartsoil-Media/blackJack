@@ -76,7 +76,7 @@ function hold() {
     userHoldingHand = true
 
     if (casinoSum > sum) {
-        messageEl.textContent = "That sucks, you lose $100"
+        messageEl.textContent = "Casino wins, you lose $100"
         cash += userLoss
         casinoCash += casinoWin
         youCashEl.textContent = cash
