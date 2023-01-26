@@ -20,8 +20,10 @@ let userWin = 200
 let userLoss = -100
 let casinoWin = 100
 let casinoLoss = -200
-let cash = 1000
+let cash = 100
 let casinoCash = 5000
+let canClickDeal = true
+let userHoldingHand = false
 
 
 
@@ -50,9 +52,10 @@ function getRandomNumber() {
 
 
 function startGame() {
-    if (isBroke === true) {
+    if (isBroke === true & canClickDeal === true) {
 
     } else {
+        hasStarted = true
         hasBlackJack = false
         roundStarted = true
         isBroke = false
@@ -70,7 +73,11 @@ function startGame() {
 function hold() {
     let casinoSum = getRandomNumber ()
     casinoHandEl.textContent = "Casino's hand: " + casinoSum
+    userHoldingHand = true
 
+if (userHoldingHand === true) {
+
+} else {
     if (casinoSum > sum) {
         messageEl.textContent = "That sucks, you lose $100"
         cash += userLoss
@@ -84,7 +91,11 @@ function hold() {
           youCashEl.textContent = cash
           youCashEl.textContent = cash
           casinoCashEl.textContent = casinoCash
-    } else if (casinoSum === sum) {
+    } else if (cash <= 0) {
+        messageEl.textContent = "YOU'RE BROKE GAME OVER"
+    }
+    
+    else if (casinoSum === sum) {
         messageEl.textContent = "Wow, it's a tie..!"
     }
     
@@ -96,6 +107,7 @@ function hold() {
         casinoCashEl.textContent = casinoCash
 
     }
+}
 
 }
 
@@ -148,6 +160,7 @@ function newCard() {
     if (isAlive === true && hasBlackJack === false && isBroke === false)  {
     
     let card = getRandomCard()
+    canClickDeal = false
     sum += card
     cards.push(card)
     console.log(cards)
