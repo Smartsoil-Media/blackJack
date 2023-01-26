@@ -69,6 +69,19 @@ p {
     display: block;
 }
 
+#hold-btn {
+    width: 120px;
+    margin: 0;
+    
+}
+
+#new-card-btn {
+    width: 120px;
+    margin: 0;
+}
+
+
+
 
 #sum-el {
     margin-bottom: 25px;
@@ -106,8 +119,26 @@ p {
     border: solid gold 1px;
     background-color: black;
     width: 250px;
-    margin: 10px auto 25px auto;
+    margin: 10px auto 10px auto;
     border-radius: 5px;
     padding: 15px 2px;
     font-size: 18px;
+}
+
+#casino-sum {
+    border: solid gold 1px;
+    background-color: black;
+    width: 250px;
+    margin: 0 auto 25px auto;
+    border-radius: 5px;
+    padding: 15px 2px;
+    font-size: 18px;
+}
+
+.hit-hold {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
 }

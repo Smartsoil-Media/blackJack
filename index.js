@@ -12,6 +12,7 @@ let yourWinsEl = document.getElementById("your-wins")
 let yourLossesEl = document.getElementById("your-losses")
 let youCashEl = document.getElementById("your-cash")
 let casinoCashEl = document.getElementById("casino-cash")
+let casinoHandEl = document.getElementById("casino-sum")
 let sum = 0
 let wins = 0
 let losses = 0
@@ -19,7 +20,7 @@ let userWin = 200
 let userLoss = -100
 let casinoWin = 100
 let casinoLoss = -200
-let cash = 200
+let cash = 1000
 let casinoCash = 5000
 
 
@@ -37,6 +38,15 @@ function getRandomCard(){
 
 }
 
+function getRandomNumber() {
+    let randomNumberC = Math.floor(Math.random() * 6) + 16
+    if (randomNumberC ===1) {
+        return 21
+    } else {
+        return randomNumberC
+    }
+}
+
 
 
 function startGame() {
@@ -51,10 +61,44 @@ function startGame() {
         let secondCard = getRandomCard()
         cards = [firstCard, secondCard]
         sum = firstCard + secondCard
+        casinoHandEl.textContent = "Casino's hand: "
         renderGame() 
     }
 
 }
+
+function hold() {
+    let casinoSum = getRandomNumber ()
+    casinoHandEl.textContent = "Casino's hand: " + casinoSum
+
+    if (casinoSum > sum) {
+        messageEl.textContent = "That sucks, you lose $100"
+        cash += userLoss
+        casinoCash += casinoWin
+        youCashEl.textContent = cash
+        casinoCashEl.textContent = casinoCash
+
+    } else if (casinoSum < sum && sum <= 21) {
+          messageEl.textContent = "Winner winner! Here's $200"
+          cash += userWin
+          youCashEl.textContent = cash
+          youCashEl.textContent = cash
+          casinoCashEl.textContent = casinoCash
+    } else if (casinoSum === sum) {
+        messageEl.textContent = "Wow, it's a tie..!"
+    }
+    
+    else {
+        messageEl.textContent = "You're out of the game! 😭"
+        cash += userLoss
+        casinoCash += casinoWin
+        youCashEl.textContent = cash
+        casinoCashEl.textContent = casinoCash
+
+    }
+
+}
+
 
 function renderGame() {
     sumEl.textContent = "Sum: " + sum
@@ -72,26 +116,20 @@ if (cash === 0) {
     if (sum <= 20 && sum >= 18) {
         message = "OOOooohhhh...... Hit or hold?"
     } else if (sum <= 10) {
-        message = "Dam that's unlucky"
+        message = "I wouldn't hold that.."
     } else if (sum >= 10 && sum <= 18) {
         message = "That's a tough one.."
     } else if (sum === 21) {
-        message = "You've got Blackjack! 🥳"
+        message = "Blackjack! You win $200 🥳"
         hasBlackJack = true
         cash += userWin
         casinoCash += casinoLoss
-        wins += 1 
-        yourWinsEl.textContent = wins
         youCashEl.textContent = cash
         casinoCashEl.textContent = casinoCash
-        
-
-    } else {
-        message = "You're out of the game! 😭"
+    } else  {
+        message = "You lose! 😭 That's -$100"
         cash += userLoss
         casinoCash += casinoWin
-        losses += 1 
-        yourLossesEl.textContent = losses
         isAlive = false
         youCashEl.textContent = cash
         casinoCashEl.textContent = casinoCash
@@ -118,19 +156,17 @@ function newCard() {
 }
 
 function newGame() {
+    isBroke = false
     cash = 1000
     cards = []
     sum = "Sum :"
     casinoCash = 5000
-    wins = 0
-    losses = 0
     youCashEl.textContent = cash
     casinoCashEl.textContent = casinoCash
-    yourWinsEl.textContent = wins
-    yourLossesEl.textContent = losses
     cardsEl.textContent = "Cards: " + cards
     sumEl.textContent = sum
     messageEl.textContent = "just one more try.."
+    casinoHandEl.textContent = "Casino's hand: "
 }
 
 
