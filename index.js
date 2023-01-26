@@ -75,9 +75,6 @@ function hold() {
     casinoHandEl.textContent = "Casino's hand: " + casinoSum
     userHoldingHand = true
 
-if (userHoldingHand === false) {
-
-} else {
     if (casinoSum > sum) {
         messageEl.textContent = "That sucks, you lose $100"
         cash += userLoss
@@ -109,7 +106,6 @@ if (userHoldingHand === false) {
     }
 }
 
-}
 
 
 function renderGame() {
