@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/styles.css" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Black Jack Game</title>
+  </head>
+  <body>
+    <div class="game-container">
+      <h1>Blackjack</h1>
+      <p class="italic" id="message-el">Fancy a flutter?</p>
+      <p id="cards-el">Cards:</p>
+      <p id="sum-el">Sum:</p>
+      <p id="casino-sum"></p>
+      <button class="btn" id="start-btn" onclick="startGame()">
+        START GAME
+      </button>
+      <button class="btn" id="new-card-btn" onclick="newCard()">HIT ME</button>
+      <button class="btn" id="reset-btn" onclick="newGame()">NEW GAME</button>
+
+
+
+    <div class="stats">
+
+      <div class="cash-container">
+        <div>
+          <p>Your $</p>
+          <p id="your-cash">1000</p>
+        </div>
+        <div>
+          <p>Casino $</p>
+          <p id="casino-cash">5000</p>
+        </div>
+      </div>
+
+
+      <div class="score-board">
+        <div>
+          <p>Wins: ⬇️</p>
+          <p id="your-wins">0</p>
+        </div>
+        <div>
+          <p>losses: ⬇️</p>
+          <p id="your-losses">0</p>
+        </div>
+    </div>
+    <script src="/index.js"></script>
+  </body>
+</html>
