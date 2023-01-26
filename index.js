@@ -16,6 +16,7 @@ let casinoHandEl = document.getElementById("casino-sum")
 let dealBtn = document.getElementById("start-btn")
 let hitBtn = document.getElementById("new-card-btn")
 let holdBtn = document.getElementById("hold-btn")
+let newRoundBtn = document.getElementById("new-round-btn")
 let sum = 0
 let wins = 0
 let losses = 0
@@ -59,6 +60,7 @@ function startGame() {
         messageEl.tabIndex = "You've already started the game"
 
     } else {
+        newRoundBtn.style.visibility = "hidden";
         dealBtn.style.visibility = "hidden";
         canClickDeal = false
         hasStarted = true
@@ -77,18 +79,23 @@ function startGame() {
 }
 
 function newRound() {
-    cards = []
+    if (cash === 0) {
+        messageEl.textContent = "I SAID YOU'RE BROKE!"
+    } else {
+        cards = []
     sum = "Sum :"
     youCashEl.textContent = cash
     casinoCashEl.textContent = casinoCash
     cardsEl.textContent = "Cards: " + cards
     sumEl.textContent = sum
-    messageEl.textContent = "Click 'deal' to start"
+    messageEl.textContent = "Game on!"
     casinoHandEl.textContent = "Casino's hand: "
     dealBtn.style.visibility = "visible";
     hitBtn.style.visibility = "visible";
     holdBtn.style.visibility = "visible";
+    newRoundBtn.style.visibility = "hidden";
 
+    }
 }
 
 
@@ -107,17 +114,20 @@ function hold() {
         dealBtn.style.visibility = "hidden";
         hitBtn.style.visibility = "hidden";
         holdBtn.style.visibility = "hidden";
-
+        newRoundBtn.style.visibility = "visible";
     } else if (casinoSum < sum && sum <= 21) {
           messageEl.textContent = "Winner winner! Here's $200"
           cash += userWin
           youCashEl.textContent = cash
           youCashEl.textContent = cash
           casinoCashEl.textContent = casinoCash
+          casinoCash += casinoLoss
+          casinoCashEl.textContent = casinoCash
 
           dealBtn.style.visibility = "hidden";
           hitBtn.style.visibility = "hidden";
           holdBtn.style.visibility = "hidden";
+          newRoundBtn.style.visibility = "visible";
     } else if (cash <= 0) {
         messageEl.textContent = "YOU'RE BROKE GAME OVER"
     }
@@ -126,6 +136,7 @@ function hold() {
         messageEl.textContent = "Wow, it's a tie..!"
         hitBtn.style.visibility = "hidden";
         holdBtn.style.visibility = "hidden";
+        newRoundBtn.style.visibility = "visible";
     }
     
     else {
@@ -134,6 +145,7 @@ function hold() {
         casinoCash += casinoWin
         youCashEl.textContent = cash
         casinoCashEl.textContent = casinoCash
+        newRoundBtn.style.visibility = "visible";
 
     }
 }
@@ -151,6 +163,10 @@ function renderGame() {
 
 if (cash === 0) {
     message = "YOU'RE BROKE GAME OVER"
+    dealBtn.style.visibility = "hidden";
+    hitBtn.style.visibility = "hidden";
+    holdBtn.style.visibility = "hidden";
+    newRoundBtn.style.visibility = "hidden";
     isBroke = true
 } else {
     if (sum <= 20 && sum >= 18) {
@@ -164,11 +180,12 @@ if (cash === 0) {
         hasBlackJack = true
         cash += userWin
         casinoCash += casinoLoss
-        youCashEl.textContent = cash
         casinoCashEl.textContent = casinoCash
+        youCashEl.textContent = cash
         dealBtn.style.visibility = "hidden";
         hitBtn.style.visibility = "hidden";
         holdBtn.style.visibility = "hidden";
+        newRoundBtn.style.visibility = "visible";
     } else  {
         message = "You lose! 😭 That's -$100"
         cash += userLoss
@@ -179,6 +196,7 @@ if (cash === 0) {
         dealBtn.style.visibility = "hidden";
         hitBtn.style.visibility = "hidden";
         holdBtn.style.visibility = "hidden";
+        newRoundBtn.style.visibility = "visible";
 
     }
 
@@ -214,6 +232,10 @@ function newGame() {
     sumEl.textContent = sum
     messageEl.textContent = "just one more try.."
     casinoHandEl.textContent = "Casino's hand: "
+    dealBtn.style.visibility = "visible";
+    hitBtn.style.visibility = "visible";
+    holdBtn.style.visibility = "visible";
+    newRoundBtn.style.visibility = "visible";
 }
 
 
