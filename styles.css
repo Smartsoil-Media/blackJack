@@ -220,12 +220,32 @@ p {
         height: 80px;
         width: 80px;
         margin: 0;
+        background-color:rgb(169, 31, 31);
     }
 }
     @media (max-width: 768px) {
     #ten-bet:hover, #twenty-bet:hover, #thirty-bet:hover {
         transform: none;
+        background-color: rgb(169, 31, 31);
     }
+}
+
+@media (max-width: 768px) {
+    .btn:hover {
+        transform: none;
+        transition: 0.0ms;
+        color: #016f32;
+    }
+    
+}
+
+@media (min-width: 768px) {
+    .btn {
+        transform: none;
+        transition: 0.0ms;
+        color: #016f32;
+    }
+    
 }
 
 #bet-amount {
