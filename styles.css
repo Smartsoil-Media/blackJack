@@ -72,7 +72,6 @@ p {
 }
 
 .btn:hover {
-    opacity: 90%;
     color: #01b954;
 
 }
@@ -222,6 +221,10 @@ p {
         width: 80px;
         margin: 0;
     }
+    #ten-bet, #twenty-bet, #thirty-bet, .btn:hover {
+        animation: none;
+    }
+
     
 }
 
