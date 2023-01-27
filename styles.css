@@ -220,6 +220,13 @@ p {
     transition: 0.2s;
 }
 
+@media (max-width: 768px) {
+    #ten-bet, #twenty-bet, #thirty-bet {
+        padding-right: 15px;
+    }
+    
+}
+
 #bet-amount {
     max-width: 250px;
     text-align: center;
