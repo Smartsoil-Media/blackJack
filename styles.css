@@ -23,6 +23,7 @@ font-family: monospace;
     color: white;
     background-color: rgba(0, 0, 0, 0.75);
     border-radius: 10px;
+    padding-bottom: 25px;
 }
 
 @media (max-width: 768px) {
@@ -67,17 +68,25 @@ p {
     font-size: 25px;
     margin: 2px auto 8px auto;
     display: block;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    opacity: 90%;
+    color: #01b954;
+
 }
 
 #hold-btn {
     width: 120px;
-    margin: 0;
+    margin: 0 0 30px;
     
 }
 
+
 #new-card-btn {
     width: 120px;
-    margin: 0;
+    margin: 0 0 30px;
 }
 
 #ten-bet, #twenty-bet, #thirty-bet {
@@ -144,7 +153,7 @@ p {
     justify-content: center;
     align-items: center;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 0px;
 }
 
 #bet-container {
@@ -156,4 +165,63 @@ p {
 
 #thirty-btn {
     width: 50px;
+}
+
+.bet-btn {
+    border-radius: 50%;
+    width: 50px;
+    height: 75px;
+    font-size: 20px;
+}
+
+#ten-bet:hover, #twenty-bet:hover, #thirty-bet:hover {
+    background-color: #016f32;
+    transform: scale(1.1)
+}
+
+#ten-bet {
+    font-family: monospace;
+    font-weight: bold;
+    color: beige;
+    width: 70px;
+    border: solid gold 3px;
+    background-color: rgb(80, 80, 202);
+    height: 70px;
+    text-align: center;
+    transition: 0.2s;
+}
+
+#twenty-bet {
+    font-family: monospace;
+    font-weight: bold;
+    color: beige;
+    border: solid gold 3px;
+    background-color: rgb(201, 109, 10);
+    margin-top: -5px;
+
+
+    width: 75px;
+    height: 75px;
+    text-align: center;
+    transition: 0.2s;
+}
+
+#thirty-bet {
+    border: solid gold 3px;
+    font-family: monospace;
+    font-weight: bold;
+    color: beige;
+    background-color: rgb(169, 31, 31);
+    width: 80px;
+    height: 80px;
+    margin-top: -10px;
+
+    text-align: center;
+    transition: 0.2s;
+}
+
+#bet-amount {
+    max-width: 250px;
+    text-align: center;
+    margin: 0 auto;
 }

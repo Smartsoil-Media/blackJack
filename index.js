@@ -23,19 +23,25 @@ let wins = 0
 let losses = 0
 let cash = 600
 let betSize = [100]
-let casinoCash = 5000
+let casinoCash = 10000
 let canClickDeal = true
 let userHoldingHand = false
+
 
 
 let betTen = false
 let betOneHundred = false
 let betFiveHundred = false
 
+hitBtn.style.visibility = "hidden";
+holdBtn.style.visibility = "hidden";
+newRoundBtn.style.visibility = "hidden";
 
 
 
-    
+function notEnoughMoney() {
+    messageEl.textContent = "NOT ENOUGH CASH!"
+}
 
 function updateBetTen() {
     betSize = []
@@ -171,6 +177,8 @@ function getRandomNumber() {
 function startGame() {
         newRoundBtn.style.visibility = "hidden";
         dealBtn.style.visibility = "hidden";
+        hitBtn.style.visibility = "visible";
+        holdBtn.style.visibility = "visible";
         canClickDeal = false
         hasStarted = true
         hasBlackJack = false
@@ -188,7 +196,20 @@ function startGame() {
 
 function newRound() {
     if (cash <= 0) {
-        messageEl.textContent = "I SAID YOU'RE BROKE!"
+        messageEl.textContent = "YOU'RE BROKE GAME OVER"
+    } else if (casinoCash <=0) {
+        messageEl.textContent = "YOU JUST BEAT THE CASINO"
+        cardsEl.textContent = "Wooooooooooo 🥳🥳"
+        sumEl.textContent = "🥳$$$$🥳$$$$$🥳"
+        casinoHandEl.textContent = "🥳$$$$🥳$$$$$🥳"
+        betAmountEl.textContent = "Wow, you have sent the Casino Broke! Congratulations, you will now be under investigation.."
+        hitBtn.style.visibility = "hidden";
+        holdBtn.style.visibility = "hidden";
+        newRoundBtn.style.visibility = "hidden";
+        dealBtn.style.visibility = "hidden";
+    }
+    else if (cash < betSize) {
+        messageEl.textContent = "please changed bet amount."
     } else {
         cards = []
     sum = "Sum :"
@@ -233,6 +254,10 @@ function hold() {
           messageEl.textContent = "Winner winner!"
           let payOut = betSize * 2
           betAmountEl.textContent = "You just won: $" + payOut
+          dealBtn.style.visibility = "hidden";
+          hitBtn.style.visibility = "hidden";
+          holdBtn.style.visibility = "hidden";
+          newRoundBtn.style.visibility = "visible";
 
          payOutUser()
           youCashEl.textContent = cash
@@ -240,20 +265,19 @@ function hold() {
           casinoCashEl.textContent = casinoCash
           casinoCash += casinoLoss
           casinoCashEl.textContent = casinoCash
-
-          dealBtn.style.visibility = "hidden";
-          hitBtn.style.visibility = "hidden";
-          holdBtn.style.visibility = "hidden";
-          newRoundBtn.style.visibility = "visible";
     } else if (cash <= 0) {
         messageEl.textContent = "YOU'RE BROKE GAME OVER"
-    }
-    
-    else if (casinoSum === sum) {
+    } else if (casinoSum === sum) {
         messageEl.textContent = "Wow, it's a tie..!"
         hitBtn.style.visibility = "hidden";
         holdBtn.style.visibility = "hidden";
         newRoundBtn.style.visibility = "visible";
+    } else if (betSize > cash) {
+        messageEl.textContent = "Please change bet amount"
+        hitBtn.style.visibility = "hidden";
+        holdBtn.style.visibility = "hidden";
+        newRoundBtn.style.visibility = "visible";
+
     }
     
     else {
@@ -286,16 +310,7 @@ if (cash === 0) {
     holdBtn.style.visibility = "hidden";
     newRoundBtn.style.visibility = "hidden";
     isBroke = true
-} else if (betSize < 10) {
-    message = "Please pick bet amount"
-
-    hitBtn.style.visibility = "hidden";
-    holdBtn.style.visibility = "hidden";
-    cardsEl.textContent = ""
-    sumEl.textContent = ""
-    casinoHandEl.textContent = ""
-}  
-else {
+} else {
     if (sum <= 20 && sum >= 18) {
         message = "OOOooohhhh...... Hit or hold?"
     } else if (sum <= 15) {
@@ -306,7 +321,7 @@ else {
         message = "Blackjack! You win 🥳"
         hasBlackJack = true
         let payOut = betSize * 2
-        betAmountEl.textContent = "You just won" + payOut
+        betAmountEl.textContent = "You just won: $" + payOut
         
 
         payOutUser()
@@ -355,12 +370,13 @@ function newCard() {
 
 function newGame() {
     isBroke = false
-    cash = 1000
-    casinoCash = 5000
+    cash = 600
+    casinoCash = 10000
     cards = []
     sum = "Sum :"
     youCashEl.textContent = cash
     casinoCashEl.textContent = casinoCash
+    betAmountEl.textContent = "Bet Amount: $" + betSize
     cardsEl.textContent = "Cards: " + cards
     sumEl.textContent = sum
     messageEl.textContent = "just one more try.."
