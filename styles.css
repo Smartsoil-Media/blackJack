@@ -224,7 +224,7 @@ p {
 }
     @media (max-width: 768px) {
     #ten-bet:hover, #twenty-bet:hover, #thirty-bet:hover {
-        animation: none;
+        transform: none;
     }
 }
 
