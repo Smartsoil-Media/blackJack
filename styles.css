@@ -18,7 +18,7 @@ font-family: monospace;
 .game-container {
     border: solid white 1px;
     max-width: 750px ;
-    margin: 15% auto;
+    margin: 5% auto;
     text-align: center;
     color: white;
     background-color: rgba(0, 0, 0, 0.75);
@@ -79,6 +79,10 @@ p {
     width: 120px;
     margin: 0;
 }
+
+#ten-bet, #twenty-bet, #thirty-bet {
+    width: 100px;
+} 
 
 
 
@@ -141,4 +145,15 @@ p {
     align-items: center;
     gap: 8px;
     margin-bottom: 8px;
+}
+
+#bet-container {
+    display: flex;
+    width: 250px;
+    margin: 0 auto;
+    gap: 8px;
+}
+
+#thirty-btn {
+    width: 50px;
 }

@@ -14,6 +14,7 @@
       <p id="cards-el">Cards:</p>
       <p id="sum-el">Sum:</p>
       <p id="casino-sum">Casino Hand: </p>
+      <p id="bet-amount">Bet Amount: $100</p>
       <button class="btn" id="new-round-btn" onclick="newRound()">NEW ROUND</button>
       <button class="btn" id="start-btn" onclick="startGame()">
         DEAL
@@ -23,6 +24,12 @@
       <div class="hit-hold">
           <button class="btn" id="new-card-btn" onclick="newCard()">HIT</button>
           <button class="btn" id="hold-btn" onclick="hold()">HOLD</button>
+    </div>
+
+    <div id="bet-container">
+      <button class="btn" id="ten-bet" onclick="updateBetTen()">10</button>
+      <button class="btn" id="twenty-bet" onclick="updateBetOneHundred()">100</button>
+      <button class="btn" id="thirty-bet" onclick="updateBetFiveHundred()">500</button>
     </div>
 
     
