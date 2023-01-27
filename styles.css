@@ -221,11 +221,11 @@ p {
         width: 80px;
         margin: 0;
     }
-    #ten-bet, #twenty-bet, #thirty-bet, .btn:hover {
+}
+    @media (max-width: 768px) {
+    #ten-bet:hover, #twenty-bet:hover, #thirty-bet:hover {
         animation: none;
     }
-
-    
 }
 
 #bet-amount {
