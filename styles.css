@@ -218,7 +218,7 @@ p {
 
 @media (max-width: 768px) {
     #ten-bet, #twenty-bet, #thirty-bet {
-        margin-right: 15px;
+        padding-right: 15px;
     }
     
 }
