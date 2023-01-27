@@ -1,5 +1,6 @@
 
 let cards = []
+let gameOn = true
 let roundStarted = false
 let hasBlackJack = false
 let isAlive = false
@@ -345,7 +346,6 @@ if (casinoHand >= 22) {
         hitBtn.style.visibility = "hidden";
         holdBtn.style.visibility = "hidden";
         newRoundBtn.style.visibility = "visible";
-
     }
     
     else {
@@ -356,7 +356,6 @@ if (casinoHand >= 22) {
         newRoundBtn.style.visibility = "visible";
         let payOut = betSize
         betAmountEl.textContent = "You just lost: $" + payOut
-
     }  
 }
 }
