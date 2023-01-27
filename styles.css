@@ -187,7 +187,6 @@ p {
     border: solid gold 3px;
     background-color: rgb(80, 80, 202);
     height: 70px;
-    text-align: center;
     transition: 0.2s;
 }
 
@@ -202,7 +201,6 @@ p {
 
     width: 75px;
     height: 75px;
-    text-align: center;
     transition: 0.2s;
 }
 
@@ -215,8 +213,6 @@ p {
     width: 80px;
     height: 80px;
     margin-top: -10px;
-
-    text-align: center;
     transition: 0.2s;
 }
 
