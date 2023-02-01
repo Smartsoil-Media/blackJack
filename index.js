@@ -188,10 +188,9 @@ function startGame() {
 
 
         let casinoFirstCard = getRandomCard ()
-        let casinoSecondCard = getRandomCard()
-        casinoCards = [casinoFirstCard, casinoSecondCard]
-        casinoHand = casinoFirstCard + casinoSecondCard
-        casinoHandEl.textContent = "Casino Hand: " + casinoHand
+        casinoCards = [casinoFirstCard]
+        casinoHand = casinoFirstCard
+        casinoHandEl.textContent = "Casino Hand: " + casinoHand + ", ?"
     
 
 
@@ -212,7 +211,7 @@ function startGame() {
             betAmountEl.textContent = "You just lost: $" + payOut
     
         } else if (casinoHand > 21) {
-            messageEl.textContent = "Casino Busts! Luck you"
+            messageEl.textContent = "Casino Busts! Lucky you"
             let payOut = betSize * 2
           betAmountEl.textContent = "You just won: $" + payOut
           dealBtn.style.visibility = "hidden";
