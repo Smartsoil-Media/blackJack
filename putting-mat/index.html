@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Putt Lab</title>
+<meta name="description" content="Score keeper for 2 to 8 foot putting mat games: Ladder, Race to 21, Lag Ladder and free practice.">
+<meta name="theme-color" content="#070B1A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Putt Lab">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Righteous&family=Rubik:wght@400;500;600&display=swap">
+<style>
+/* ===== Putt Lab · neon midnight ===== */
+:root{
+  --ground:#070B1A;
+  --surface:#0F1733;
+  --surface-2:#161F45;
+  --line:rgba(118,140,255,.16);
+  --text:#EAF0FF;
+  --muted:#8A96C4;
+  --cyan:#2DF4FF;
+  --cyan-dim:rgba(45,244,255,.14);
+  --lime:#B8FF3C;
+  --lime-dim:rgba(184,255,60,.14);
+  --magenta:#FF3D9A;
+  --magenta-dim:rgba(255,61,154,.14);
+  --amber:#FFC247;
+  --amber-dim:rgba(255,194,71,.14);
+  --felt:#0E3B2C;
+  --display:'Righteous', 'Arial Rounded MT Bold', 'Trebuchet MS', sans-serif;
+  --body:'Rubik', 'Helvetica Neue', Arial, sans-serif;
+  --radius:18px;
+  --safe-b:env(safe-area-inset-bottom, 0px);
+  --safe-t:env(safe-area-inset-top, 0px);
+  color-scheme:dark;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--ground);color:var(--text)}
+body{
+  font-family:var(--body);font-size:16px;line-height:1.45;
+  min-height:100vh;min-height:100dvh;
+  background:
+    radial-gradient(900px 500px at 50% -10%, rgba(45,244,255,.10), transparent 60%),
+    radial-gradient(700px 400px at 100% 100%, rgba(255,61,154,.08), transparent 60%),
+    var(--ground);
+  overscroll-behavior-y:none;
+  -webkit-user-select:none;user-select:none;
+}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.02em;margin:0;text-wrap:balance}
+.num{font-family:var(--display);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+
+#app{max-width:520px;margin:0 auto;padding:calc(12px + var(--safe-t)) 16px calc(88px + var(--safe-b))}
+
+/* ---- header ---- */
+.top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 2px 14px}
+.brand{font-family:var(--display);font-size:26px;letter-spacing:.06em;color:var(--cyan);
+  text-shadow:0 0 6px rgba(45,244,255,.9),0 0 22px rgba(45,244,255,.45),0 0 48px rgba(45,244,255,.25)}
+.brand small{display:block;font-family:var(--body);font-size:11px;letter-spacing:.2em;color:var(--muted);text-shadow:none;margin-top:-2px}
+.top .date{font-size:13px;color:var(--muted)}
+
+/* ---- screens ---- */
+.screen{display:none;flex-direction:column;gap:16px}
+.screen.on{display:flex}
+
+/* ---- the mat ---- */
+.mat-wrap{position:relative;padding:14px 6px 8px}
+.mat{
+  position:relative;height:78px;border-radius:8px;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 2px, transparent 2px 7px),
+    linear-gradient(180deg,#12503A,#0B3427);
+  box-shadow:inset 0 0 0 1px rgba(184,255,60,.18), 0 12px 30px -18px rgba(0,0,0,.9);
+}
+.mat .cup{position:absolute;left:5%;top:50%;width:22px;height:22px;border-radius:50%;transform:translate(-50%,-50%);
+  background:#03070F;box-shadow:inset 0 0 0 2px rgba(255,255,255,.55),0 0 0 3px rgba(0,0,0,.35)}
+.mat .cup::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1.5px dashed rgba(255,255,255,.28)}
+.mat .mark{position:absolute;top:0;bottom:0;width:0}
+.mat .mark i{position:absolute;left:0;width:2px;height:16px;background:rgba(240,245,240,.7);border-radius:1px;transform:translateX(-50%)}
+.mat .mark i.a{top:9px}.mat .mark i.b{bottom:9px}
+.mat .mark b{position:absolute;left:0;top:50%;width:6px;height:6px;border-radius:50%;background:rgba(240,245,240,.85);transform:translate(-50%,-50%)}
+.mat .mark span{position:absolute;left:0;top:100%;transform:translateX(-50%);margin-top:6px;font-family:var(--display);font-size:13px;color:var(--muted);transition:color .2s,text-shadow .2s}
+.mat .mark.hot span{color:var(--cyan);text-shadow:0 0 10px rgba(45,244,255,.8)}
+.mat .mark.hot i,.mat .mark.hot b{background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.mat .tee{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-family:var(--display);font-size:9px;letter-spacing:.2em;color:rgba(184,255,60,.5)}
+.mat .ball{position:absolute;top:50%;width:16px;height:16px;border-radius:50%;transform:translate(-50%,-50%);
+  background:radial-gradient(circle at 35% 35%,#fff,#d9e2ff 60%,#9fb0e0);
+  box-shadow:0 0 0 2px rgba(255,255,255,.25),0 0 14px 4px rgba(255,255,255,.55),0 6px 10px -4px rgba(0,0,0,.8);
+  transition:left .35s cubic-bezier(.2,.9,.3,1.2)}
+.mat .ball.lag{box-shadow:0 0 0 2px rgba(255,255,255,.25),0 0 14px 4px rgba(255,194,71,.6)}
+.mat .arrow{position:absolute;top:50%;height:2px;transform:translateY(-50%);
+  background:repeating-linear-gradient(90deg,var(--amber) 0 6px,transparent 6px 12px);opacity:.75;pointer-events:none}
+.mat .arrow::before{content:"";position:absolute;left:-1px;top:50%;width:0;height:0;transform:translateY(-50%);
+  border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:8px solid var(--amber)}
+.mat-legend{display:flex;justify-content:space-between;padding:26px 6px 0;font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+@media (prefers-reduced-motion:reduce){.mat .ball{transition:none}}
+
+/* ---- cards ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.game-list{display:flex;flex-direction:column;gap:10px}
+.game{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;text-align:left;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 16px 14px;
+  transition:transform .08s,border-color .15s}
+.game:active{transform:scale(.985)}
+.game h3{font-size:20px;color:var(--text)}
+.game .tag{grid-column:2;grid-row:1;font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;padding:5px 9px;border-radius:999px}
+.game .tag.hole{color:var(--lime);background:var(--lime-dim)}
+.game .tag.lag{color:var(--amber);background:var(--amber-dim)}
+.game .tag.open{color:var(--cyan);background:var(--cyan-dim)}
+.game p{grid-column:1 / -1;margin:0;font-size:13.5px;color:var(--muted);line-height:1.4}
+.game .best{grid-column:1 / -1;font-size:12px;color:var(--muted)}
+.game .best em{font-style:normal;color:var(--text);font-family:var(--display)}
+
+/* summary strip */
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.strip .tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.strip .tile .v{font-family:var(--display);font-size:22px;line-height:1.1;color:var(--text)}
+.strip .tile .v.cyan{color:var(--cyan)}
+.strip .tile .l{font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+
+/* ---- live game ---- */
+.live-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.live-head h2{font-size:22px}
+.live-head .quit{font-size:13px;color:var(--muted);padding:8px 10px;border-radius:10px;border:1px solid var(--line)}
+.prompt{text-align:center;padding:4px 0 0}
+.prompt .big{font-family:var(--display);font-size:44px;line-height:1;color:var(--cyan);
+  text-shadow:0 0 8px rgba(45,244,255,.8),0 0 30px rgba(45,244,255,.35)}
+.prompt .big.lagc{color:var(--amber);text-shadow:0 0 8px rgba(255,194,71,.8),0 0 30px rgba(255,194,71,.35)}
+.prompt .sub{color:var(--muted);font-size:14px;margin-top:4px}
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.chip{padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:500;font-size:14px;color:var(--muted)}
+.chip.on{color:var(--text);border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan) inset,0 0 14px rgba(45,244,255,.35)}
+.chip.on.amber{border-color:var(--amber);box-shadow:0 0 0 1px var(--amber) inset,0 0 14px rgba(255,194,71,.3)}
+.pad{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pad.four .k:nth-child(1){grid-column:1 / -1}
+.k{min-height:84px;border-radius:20px;font-family:var(--display);font-size:22px;letter-spacing:.06em;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  border:1.5px solid;transition:transform .06s,filter .1s}
+.k small{font-family:var(--body);font-size:12px;letter-spacing:.04em;opacity:.8;font-weight:500}
+.k:active{transform:scale(.97);filter:brightness(1.25)}
+.k.made{color:var(--lime);border-color:var(--lime);background:var(--lime-dim);box-shadow:0 0 22px -4px rgba(184,255,60,.5),inset 0 0 22px -10px rgba(184,255,60,.6)}
+.k.miss{color:var(--magenta);border-color:var(--magenta);background:var(--magenta-dim);box-shadow:0 0 22px -4px rgba(255,61,154,.5),inset 0 0 22px -10px rgba(255,61,154,.6)}
+.k.dead{color:var(--cyan);border-color:var(--cyan);background:var(--cyan-dim);box-shadow:0 0 22px -4px rgba(45,244,255,.5),inset 0 0 22px -10px rgba(45,244,255,.6)}
+.k.near{color:var(--amber);border-color:var(--amber);background:var(--amber-dim);box-shadow:0 0 22px -4px rgba(255,194,71,.4)}
+.score-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 2px 0}
+.score-row .s{font-size:14px;color:var(--muted)}
+.score-row .s b{font-family:var(--display);font-weight:400;font-size:18px;color:var(--text);margin-right:2px}
+.score-row .undo{font-size:13px;color:var(--muted);padding:8px 12px;border-radius:10px;border:1px solid var(--line)}
+.score-row .undo:disabled{opacity:.35}
+.log{display:flex;gap:5px;flex-wrap:wrap;padding:2px 2px 0}
+.log i{width:12px;height:12px;border-radius:3px;display:block}
+.log i.made{background:var(--lime);box-shadow:0 0 6px rgba(184,255,60,.6)}
+.log i.missed{background:var(--magenta);opacity:.85}
+.log i.dead{background:var(--cyan);box-shadow:0 0 6px rgba(45,244,255,.6)}
+.log i.short,.log i.long{background:var(--amber);opacity:.85}
+.log i.off{background:rgba(255,255,255,.18)}
+.rounds{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.rounds .r{background:var(--surface-2);border-radius:12px;padding:8px 6px;text-align:center;border:1px solid transparent}
+.rounds .r.now{border-color:var(--amber)}
+.rounds .r.done{opacity:.85}
+.rounds .r .d{font-size:11px;color:var(--muted);letter-spacing:.08em}
+.rounds .r .p{font-family:var(--display);font-size:20px;line-height:1.1}
+
+/* finish */
+.finish{text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center;padding:24px 16px}
+.finish .hero{font-family:var(--display);font-size:64px;line-height:1;color:var(--lime);text-shadow:0 0 10px rgba(184,255,60,.8),0 0 40px rgba(184,255,60,.35)}
+.finish .hero.pb{color:var(--cyan);text-shadow:0 0 10px rgba(45,244,255,.8),0 0 40px rgba(45,244,255,.35)}
+.finish .pbtag{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);font-weight:600}
+.finish p{margin:0;color:var(--muted)}
+.btn{padding:14px 22px;border-radius:14px;font-weight:600;font-size:15px;border:1px solid var(--line);background:var(--surface-2);color:var(--text)}
+.btn.primary{background:var(--cyan);color:#04121a;border-color:var(--cyan);box-shadow:0 0 22px -4px rgba(45,244,255,.7)}
+.btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+/* ---- stats ---- */
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar{display:grid;grid-template-columns:44px 1fr 74px;gap:10px;align-items:center}
+.bar .d{font-family:var(--display);font-size:18px}
+.bar .track{height:12px;border-radius:999px;background:var(--surface-2);overflow:hidden;position:relative}
+.bar .fill{position:absolute;inset:0 auto 0 0;border-radius:999px;background:linear-gradient(90deg,rgba(184,255,60,.5),var(--lime));box-shadow:0 0 12px rgba(184,255,60,.5);transition:width .5s}
+.bar .fill.lagf{background:linear-gradient(90deg,rgba(255,194,71,.5),var(--amber));box-shadow:0 0 12px rgba(255,194,71,.5)}
+.bar .v{text-align:right;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar .v b{font-family:var(--display);font-weight:400;font-size:16px;color:var(--text)}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kv .item{background:var(--surface-2);border-radius:14px;padding:10px 12px}
+.kv .item .v{font-family:var(--display);font-size:24px;line-height:1.1}
+.kv .item .l{font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+.card h2{font-size:18px;margin-bottom:12px}
+.card h2 span{font-family:var(--body);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-left:8px}
+.tend{display:flex;height:14px;border-radius:999px;overflow:hidden;background:var(--surface-2);margin-top:8px}
+.tend i{display:block;height:100%}
+.tend .sh{background:var(--amber)}.tend .dd{background:var(--cyan)}.tend .lg{background:#ff8a47}
+.tend-l{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}
+.empty{color:var(--muted);text-align:center;padding:26px 10px;font-size:14px;line-height:1.5}
+
+/* ---- history ---- */
+.hist{display:flex;flex-direction:column;gap:8px}
+.h{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.h .n{font-weight:600}
+.h .m{font-size:12.5px;color:var(--muted);grid-column:1}
+.h .sc{grid-row:1 / span 2;font-family:var(--display);font-size:22px;text-align:right}
+.h .sc.lime{color:var(--lime)}.h .sc.cyan{color:var(--cyan)}.h .sc.amber{color:var(--amber)}
+.h .del{grid-column:1 / -1;justify-self:end;font-size:12px;color:var(--muted);padding:4px 0 0}
+.h .del.arm{color:var(--magenta)}
+.danger{color:var(--magenta);font-size:13px;text-align:center;padding:10px}
+
+/* ---- nav ---- */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:5;
+  background:rgba(7,11,26,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);padding:8px 10px calc(8px + var(--safe-b))}
+nav .inner{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+nav button{padding:8px 4px;border-radius:12px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--cyan);text-shadow:0 0 10px rgba(45,244,255,.7)}
+nav button.on svg{filter:drop-shadow(0 0 5px rgba(45,244,255,.8))}
+
+/* install tip */
+.tip{display:none;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:13.5px;color:var(--muted);line-height:1.45}
+.tip.on{display:flex;gap:12px;align-items:flex-start}
+.tip b{color:var(--text)}
+.tip button{color:var(--cyan);font-weight:600;font-size:13px;flex:none;padding:2px 4px}
+.toast{position:fixed;left:50%;bottom:calc(96px + var(--safe-b));transform:translate(-50%,10px);background:var(--surface-2);border:1px solid var(--line);color:var(--text);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:9}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand">PUTT LAB<small>2 · 4 · 6 · 8 FT MAT</small></div>
+    <div class="date" id="today"></div>
+  </header>
+
+  <!-- PLAY -->
+  <section class="screen on" id="s-play"></section>
+  <!-- STATS -->
+  <section class="screen" id="s-stats"></section>
+  <!-- HISTORY -->
+  <section class="screen" id="s-hist"></section>
+</div>
+
+<nav>
+  <div class="inner">
+    <button data-nav="play" class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/></svg>Play</button>
+    <button data-nav="stats"><svg viewBox="0 0 24 24"><path d="M4 19h16M6 16V10M11 16V5M16 16v-7M21 16v-3"/></svg>Stats</button>
+    <button data-nav="hist"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>History</button>
+  </div>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+'use strict';
+const DIST = [2,4,6,8];
+const KEY = 'puttlab.v1';
+const $ = (s, el=document) => el.querySelector(s);
+
+const GAMES = {
+  practice:{ name:'Free Practice', tag:'open', tagLabel:'Open',
+    blurb:'Pick a distance and a target. Hole or marker, as many balls as you like. Every putt feeds your stats.' },
+  ladder:{ name:'Ladder', tag:'hole', tagLabel:'To the hole',
+    blurb:'Start at 2 ft. Make it and step back one line. Miss and step forward one. Hole the 8-footer to finish. Fewest putts wins.' },
+  race21:{ name:'Race to 21', tag:'hole', tagLabel:'To the hole',
+    blurb:'Rotate 2, 4, 6, 8. A make from 2 ft scores 1, 4 ft scores 2, 6 ft 3, 8 ft 4. Reach 21 in the fewest putts.' },
+  lag:{ name:'Lag Ladder', tag:'lag', tagLabel:'To the markers',
+    blurb:'Three balls at each marker, 2 through 8. Stop it dead on the line for 3, just short or long for 1. 36 is perfect.' },
+};
+
+/* ---------- storage ---------- */
+let db = load();
+function load(){
+  try{ const d = JSON.parse(localStorage.getItem(KEY)); if(d && Array.isArray(d.sessions)) return d; }catch(e){}
+  return { sessions:[], active:null, tipDismissed:false };
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){} }
+
+/* ---------- game engine: state is always derived from the putt list ---------- */
+function compute(s){
+  const p = s.putts;
+  const st = { type:s.type, n:p.length, done:false, dist:2, target:'hole', points:0, makes:0, score:null };
+  if(s.type==='practice'){
+    st.dist = s.sel.dist; st.target = s.sel.target;
+    const hole = p.filter(x=>x.target==='hole');
+    st.makes = hole.filter(x=>x.r==='made').length;
+    st.holeN = hole.length;
+    st.lagN = p.length - hole.length;
+    st.dead = p.filter(x=>x.r==='dead').length;
+    st.score = st.holeN ? Math.round(100*st.makes/st.holeN) : (st.lagN ? Math.round(100*st.dead/st.lagN) : 0);
+  } else if(s.type==='ladder'){
+    let d = 2, done=false;
+    for(const x of p){
+      if(done) break;
+      if(x.r==='made'){ if(d===8){done=true;} else d+=2; }
+      else d = Math.max(2, d-2);
+    }
+    st.dist = d; st.done = done; st.makes = p.filter(x=>x.r==='made').length; st.score = p.length;
+  } else if(s.type==='race21'){
+    let pts=0, i=0;
+    for(const x of p){ if(x.r==='made') pts += DIST[i%4]/2; i++; if(pts>=21) break; }
+    st.points = pts; st.done = pts>=21; st.dist = DIST[p.length%4];
+    st.makes = p.filter(x=>x.r==='made').length; st.score = p.length;
+  } else if(s.type==='lag'){
+    st.target='marker';
+    const PTS = {dead:3, short:1, long:1, off:0};
+    st.points = p.reduce((a,x)=>a+(PTS[x.r]||0),0);
+    st.rounds = DIST.map((d,i)=>({d, pts:p.slice(i*3,i*3+3).reduce((a,x)=>a+(PTS[x.r]||0),0), n:Math.min(3,Math.max(0,p.length-i*3))}));
+    st.done = p.length>=12; st.dist = DIST[Math.min(3, Math.floor(p.length/3))];
+    st.dead = p.filter(x=>x.r==='dead').length; st.score = st.points;
+  }
+  return st;
+}
+function scoreLabel(s){
+  const st = compute(s);
+  if(s.type==='practice'){
+    if(st.holeN && st.lagN) return `${st.score}% · ${st.holeN+st.lagN} putts`;
+    if(st.holeN) return `${st.makes}/${st.holeN} holed`;
+    if(st.lagN) return `${st.dead}/${st.lagN} dead on`;
+    return '0 putts';
+  }
+  if(s.type==='ladder') return `${st.score} putts${st.done?'':' · unfinished'}`;
+  if(s.type==='race21') return `${st.score} putts · ${st.points} pts${st.done?'':' · unfinished'}`;
+  if(s.type==='lag') return `${st.points} / 36${st.done?'':' · unfinished'}`;
+  return '';
+}
+function scoreBig(s){ const st=compute(s); return s.type==='practice' ? st.score+'%' : (s.type==='lag' ? st.points : st.score); }
+function scoreColor(t){ return t==='lag'?'amber':(t==='practice'?'cyan':'lime'); }
+/* lower is better for ladder/race21, higher for lag */
+function best(type){
+  const done = db.sessions.filter(s=>s.type===type && compute(s).done);
+  if(!done.length) return null;
+  const v = done.map(s=>compute(s).score);
+  return type==='lag' ? Math.max(...v) : Math.min(...v);
+}
+
+/* ---------- stats across everything ---------- */
+function allPutts(){
+  const out=[];
+  for(const s of db.sessions) for(const x of s.putts) out.push(x);
+  if(db.active) for(const x of db.active.putts) out.push(x);
+  return out;
+}
+function stats(){
+  const P = allPutts();
+  const hole = P.filter(x=>x.target==='hole');
+  const lag = P.filter(x=>x.target==='marker');
+  const byD = DIST.map(d=>{ const h=hole.filter(x=>x.d===d); const m=h.filter(x=>x.r==='made').length; return {d, n:h.length, m, pct:h.length?Math.round(100*m/h.length):0}; });
+  const lagD = DIST.map(d=>{ const h=lag.filter(x=>x.d===d); const m=h.filter(x=>x.r==='dead').length; return {d, n:h.length, m, pct:h.length?Math.round(100*m/h.length):0}; });
+  let cur=0, bestStreak=0;
+  for(const x of hole){ if(x.r==='made'){cur++; bestStreak=Math.max(bestStreak,cur);} else cur=0; }
+  const makes = hole.filter(x=>x.r==='made').length;
+  const today = new Date().toDateString();
+  const todayHole = hole.filter(x=>new Date(x.t).toDateString()===today);
+  const todayMakes = todayHole.filter(x=>x.r==='made').length;
+  return { total:P.length, holeN:hole.length, makes, pct:hole.length?Math.round(100*makes/hole.length):0, byD, lagD,
+    lagN:lag.length, dead:lag.filter(x=>x.r==='dead').length, short:lag.filter(x=>x.r==='short').length, long:lag.filter(x=>x.r==='long').length, off:lag.filter(x=>x.r==='off').length,
+    streak:cur, bestStreak, todayN:todayHole.length, todayPct:todayHole.length?Math.round(100*todayMakes/todayHole.length):null,
+    sessions:db.sessions.length };
+}
+
+/* ---------- rendering ---------- */
+const view = { screen:'play', finished:null, armDel:null };
+const fmtDate = t => new Date(t).toLocaleDateString(undefined,{weekday:'short', month:'short', day:'numeric'});
+const fmtTime = t => new Date(t).toLocaleTimeString(undefined,{hour:'numeric', minute:'2-digit'});
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ball position along the mat, as a % from the left (cup at 5%, 8 ft mark at 80%) */
+const POS = {0:5, 2:23.75, 4:42.5, 6:61.25, 8:80};
+function matHTML(dist, target){
+  const marks = DIST.map(d=>`<div class="mark ${d===dist?'hot':''}" style="left:${POS[d]}%"><i class="a"></i><b></b><i class="b"></i><span>${d}</span></div>`).join('');
+  const ballLeft = target==='marker' ? 92 : POS[dist];
+  const arrow = target==='marker' ? `<div class="arrow" style="left:${POS[dist]+1.5}%;width:${92-POS[dist]-3}%"></div>` : '';
+  return `<div class="mat-wrap"><div class="mat">
+    <div class="cup"></div>${marks}${arrow}<span class="tee">VERVE</span>
+    <div class="ball ${target==='marker'?'lag':''}" style="left:${ballLeft}%"></div>
+  </div><div class="mat-legend"><span>Cup</span><span>${target==='marker' ? 'Lag to the '+dist+' ft line' : dist+' ft to the cup'}</span><span>Tee</span></div></div>`;
+}
+
+function render(){
+  document.querySelectorAll('.screen').forEach(el=>el.classList.toggle('on', el.id==='s-'+view.screen));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on', b.dataset.nav===view.screen));
+  if(view.screen==='play') renderPlay();
+  if(view.screen==='stats') renderStats();
+  if(view.screen==='hist') renderHist();
+}
+
+function renderPlay(){
+  const el = $('#s-play');
+  if(view.finished){ el.innerHTML = finishHTML(view.finished); bind(el); return; }
+  if(db.active){ el.innerHTML = liveHTML(db.active); bind(el); return; }
+  const S = stats();
+  const showTip = isIOS() && !isStandalone() && !db.tipDismissed;
+  el.innerHTML = `
+    <div class="strip">
+      <div class="tile"><div class="v cyan">${S.todayPct===null?'–':S.todayPct+'%'}</div><div class="l">Today</div></div>
+      <div class="tile"><div class="v">${S.holeN?S.pct+'%':'–'}</div><div class="l">All time</div></div>
+      <div class="tile"><div class="v">${S.bestStreak}</div><div class="l">Best streak</div></div>
+    </div>
+    <div class="tip ${showTip?'on':''}"><div><b>Save it to your Home Screen.</b> Tap Share, then “Add to Home Screen”. It opens full-screen like an app and works offline.</div><button data-act="tip">Got it</button></div>
+    <div class="eyebrow" style="padding:4px 2px 0">Pick a game</div>
+    <div class="game-list">
+      ${Object.entries(GAMES).map(([k,g])=>{
+        const b = best(k);
+        const bestLine = b===null ? (k==='practice'?'':'No finished round yet') :
+          (k==='lag' ? `Best <em>${b}</em> / 36` : `Best <em>${b}</em> putts`);
+        return `<button class="game" data-act="start" data-type="${k}">
+          <h3>${g.name}</h3><span class="tag ${g.tag}">${g.tagLabel}</span>
+          <p>${g.blurb}</p>${bestLine?`<div class="best">${bestLine}</div>`:''}
+        </button>`; }).join('')}
+    </div>`;
+  bind(el);
+}
+
+function liveHTML(s){
+  const g = GAMES[s.type], st = compute(s);
+  const target = st.target;
+  let prompt, chips='', extra='';
+  if(s.type==='practice'){
+    chips = `<div class="chips">${DIST.map(d=>`<button class="chip ${d===st.dist?'on':''} ${target==='marker'?'amber':''}" data-act="dist" data-d="${d}">${d} ft</button>`).join('')}</div>
+      <div class="chips"><button class="chip ${target==='hole'?'on':''}" data-act="target" data-t="hole">To the cup</button><button class="chip amber ${target==='marker'?'on':''}" data-act="target" data-t="marker">Lag to the line</button></div>`;
+  }
+  if(target==='marker'){
+    prompt = `<div class="big lagc">${st.dist} FT LINE</div><div class="sub">${s.type==='lag'?`Ball ${(st.n%3)+1} of 3 at this marker`:'Stop it dead on the line'}</div>`;
+  } else {
+    prompt = `<div class="big">${st.dist} FT</div><div class="sub">${s.type==='ladder' ? (st.dist===8?'Hole this one to finish':'Make it to step back') : s.type==='race21' ? `Worth ${st.dist/2} point${st.dist>2?'s':''} · ${st.points} of 21` : 'To the cup'}</div>`;
+  }
+  if(s.type==='lag'){
+    extra = `<div class="rounds">${st.rounds.map((r,i)=>`<div class="r ${i===Math.min(3,Math.floor(st.n/3))?'now':''} ${r.n===3?'done':''}"><div class="d">${r.d} FT</div><div class="p">${r.n?r.pts:'–'}</div></div>`).join('')}</div>`;
+  }
+  const pad = target==='marker'
+    ? `<div class="pad four"><button class="k dead" data-act="putt" data-r="dead">DEAD ON<small>stopped on the line</small></button>
+        <button class="k near" data-act="putt" data-r="short">SHORT<small>just shy</small></button>
+        <button class="k near" data-act="putt" data-r="long">LONG<small>just past</small></button>
+        <button class="k miss" data-act="putt" data-r="off" style="grid-column:1 / -1;min-height:56px;font-size:16px">WAY OFF</button></div>`
+    : `<div class="pad"><button class="k made" data-act="putt" data-r="made">MADE</button><button class="k miss" data-act="putt" data-r="missed">MISSED</button></div>`;
+  const scoreLine = s.type==='practice' ? (st.holeN||st.lagN ? scoreLabel(s) : 'No putts yet')
+    : s.type==='ladder' ? `<b>${st.n}</b> putts · <b>${st.makes}</b> made`
+    : s.type==='race21' ? `<b>${st.points}</b> pts · <b>${st.n}</b> putts`
+    : `<b>${st.points}</b> pts · ${st.n} of 12`;
+  return `
+    <div class="live-head"><h2>${g.name}</h2><button class="quit" data-act="end">${s.type==='practice'?'Finish':'Quit'}</button></div>
+    ${matHTML(st.dist, target)}
+    <div class="prompt">${prompt}</div>
+    ${chips}
+    ${pad}
+    <div class="score-row"><div class="s">${scoreLine}</div><button class="undo" data-act="undo" ${st.n?'':'disabled'}>Undo</button></div>
+    ${extra}
+    <div class="log">${s.putts.map(x=>`<i class="${x.r}" title="${x.d} ft ${x.r}"></i>`).join('')}</div>`;
+}
+
+function finishHTML(f){
+  const g = GAMES[f.type], st = compute(f);
+  const big = f.type==='lag' ? st.points : st.score;
+  const unit = f.type==='lag' ? '/ 36' : 'putts';
+  const b = best(f.type);
+  const isPB = f.pb;
+  const line = f.type==='ladder' ? `You climbed the ladder in ${st.n} putts, ${st.makes} of them made.`
+    : f.type==='race21' ? `${st.points} points in ${st.n} putts. ${st.makes} holed.`
+    : `${st.dead} dead-on lags out of 12.`;
+  return `<div class="card finish">
+      <div class="eyebrow">${g.name} · finished</div>
+      <div class="hero ${isPB?'pb':''}">${big}<span style="font-size:22px;opacity:.7"> ${unit}</span></div>
+      ${isPB ? '<div class="pbtag">New personal best</div>' : `<div class="pbtag" style="color:var(--muted)">Best ${b}${f.type==='lag'?' / 36':' putts'}</div>`}
+      <p>${line}</p>
+      <div class="btn-row"><button class="btn primary" data-act="again" data-type="${f.type}">Play again</button><button class="btn" data-act="home">Done</button></div>
+    </div>`;
+}
+
+function renderStats(){
+  const S = stats(), el = $('#s-stats');
+  if(!S.total){ el.innerHTML = `<div class="card"><div class="empty">Nothing logged yet. Play a game and this fills in with make rates by distance, lag tendency and your best rounds.</div></div>`; return; }
+  const bl = best('ladder'), br = best('race21'), bg = best('lag');
+  const tendN = S.short+S.dead+S.long;
+  el.innerHTML = `
+    <div class="card"><h2>Holed by distance <span>${S.holeN} putts</span></h2>
+      <div class="bars">${S.byD.map(r=>`<div class="bar"><div class="d">${r.d} ft</div><div class="track"><div class="fill" style="width:${r.pct}%"></div></div><div class="v"><b>${r.n?r.pct+'%':'–'}</b> ${r.n?`${r.m}/${r.n}`:''}</div></div>`).join('')}</div>
+    </div>
+    <div class="card"><h2>Streaks</h2>
+      <div class="kv"><div class="item"><div class="v" style="color:var(--lime)">${S.streak}</div><div class="l">Current streak</div></div>
+      <div class="item"><div class="v">${S.bestStreak}</div><div class="l">Best streak</div></div></div>
+    </div>
+    <div class="card"><h2>Lag control <span>${S.lagN} lags</span></h2>
+      ${S.lagN ? `<div class="bars">${S.lagD.map(r=>`<div class="bar"><div class="d">${r.d} ft</div><div class="track"><div class="fill lagf" style="width:${r.pct}%"></div></div><div class="v"><b>${r.n?r.pct+'%':'–'}</b> ${r.n?'dead':''}</div></div>`).join('')}</div>
+      <div class="tend"><i class="sh" style="width:${tendN?100*S.short/tendN:0}%"></i><i class="dd" style="width:${tendN?100*S.dead/tendN:0}%"></i><i class="lg" style="width:${tendN?100*S.long/tendN:0}%"></i></div>
+      <div class="tend-l"><span>Short ${S.short}</span><span>Dead ${S.dead}</span><span>Long ${S.long}</span></div>
+      ${S.short+S.long ? `<p style="margin:10px 0 0;font-size:13.5px;color:var(--muted)">${S.short>S.long?`You leave it short more often than long (${Math.round(100*S.short/(S.short+S.long))}% of misses). Trust the line, add a touch of pace.`:S.long>S.short?`You run it past more often than short (${Math.round(100*S.long/(S.short+S.long))}% of misses). Take a little off.`:'Misses are split evenly between short and long.'}</p>`:''}`
+      : `<div class="empty" style="padding:8px">No lag putts yet. Try Lag Ladder or set a marker target in Free Practice.</div>`}
+    </div>
+    <div class="card"><h2>Best rounds</h2>
+      <div class="kv">
+        <div class="item"><div class="v" style="color:var(--lime)">${bl??'–'}</div><div class="l">Ladder · putts</div></div>
+        <div class="item"><div class="v" style="color:var(--lime)">${br??'–'}</div><div class="l">Race to 21 · putts</div></div>
+        <div class="item"><div class="v" style="color:var(--amber)">${bg??'–'}</div><div class="l">Lag Ladder · / 36</div></div>
+        <div class="item"><div class="v">${S.sessions}</div><div class="l">Sessions</div></div>
+      </div>
+    </div>`;
+}
+
+function renderHist(){
+  const el = $('#s-hist');
+  const list = db.sessions.slice().sort((a,b)=>b.startedAt-a.startedAt);
+  if(!list.length){ el.innerHTML = `<div class="card"><div class="empty">No sessions yet. Finished games and practice sessions land here.</div></div>`; return; }
+  let last='';
+  el.innerHTML = `<div class="hist">${list.map(s=>{
+    const day = fmtDate(s.startedAt); const head = day!==last ? `<div class="eyebrow" style="padding:8px 2px 2px">${day}</div>` : ''; last=day;
+    const arm = view.armDel===s.id;
+    return head+`<div class="h"><div class="n">${GAMES[s.type].name}</div><div class="sc ${scoreColor(s.type)}">${scoreBig(s)}</div>
+      <div class="m">${fmtTime(s.startedAt)} · ${scoreLabel(s)}</div>
+      <button class="del ${arm?'arm':''}" data-act="del" data-id="${s.id}">${arm?'Tap again to delete':'Delete'}</button></div>`;
+  }).join('')}</div>
+  <button class="danger" data-act="wipe">${view.armDel==='ALL'?'Tap again to erase everything':'Erase all data'}</button>`;
+  bind(el);
+}
+
+/* ---------- actions ---------- */
+function bind(el){
+  el.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click', onAct));
+}
+function onAct(e){
+  const b = e.currentTarget, a = b.dataset.act;
+  if(a==='start' || a==='again'){
+    view.finished=null;
+    db.active = { id:uid(), type:b.dataset.type, startedAt:Date.now(), putts:[], sel:{dist:4, target:'hole'} };
+    save(); render(); return;
+  }
+  if(a==='putt'){
+    const s = db.active, st = compute(s);
+    s.putts.push({ d:st.dist, target:st.target, r:b.dataset.r, t:Date.now() });
+    buzz(b.dataset.r==='made'||b.dataset.r==='dead' ? [18,40,18] : 12);
+    const after = compute(s);
+    if(after.done){ finish(s); return; }
+    save(); render(); return;
+  }
+  if(a==='undo'){ db.active.putts.pop(); save(); render(); return; }
+  if(a==='dist'){ db.active.sel.dist = +b.dataset.d; save(); render(); return; }
+  if(a==='target'){ db.active.sel.target = b.dataset.t; save(); render(); return; }
+  if(a==='end'){
+    const s = db.active;
+    if(s.putts.length){ db.sessions.push(endSession(s)); toast(s.type==='practice'?'Session saved':'Round saved as unfinished'); }
+    db.active=null; save(); render(); return;
+  }
+  if(a==='home'){ view.finished=null; render(); return; }
+  if(a==='tip'){ db.tipDismissed=true; save(); render(); return; }
+  if(a==='del'){
+    const id=b.dataset.id;
+    if(view.armDel===id){ db.sessions = db.sessions.filter(s=>s.id!==id); view.armDel=null; save(); toast('Deleted'); }
+    else view.armDel=id;
+    render(); return;
+  }
+  if(a==='wipe'){
+    if(view.armDel==='ALL'){ db = { sessions:[], active:null, tipDismissed:db.tipDismissed }; view.armDel=null; save(); toast('All data erased'); }
+    else view.armDel='ALL';
+    render(); return;
+  }
+}
+function endSession(s){ return { id:s.id, type:s.type, startedAt:s.startedAt, endedAt:Date.now(), putts:s.putts }; }
+function finish(s){
+  const prev = best(s.type);
+  const st = compute(s);
+  const pb = prev===null || (s.type==='lag' ? st.score>prev : st.score<prev);
+  db.sessions.push(endSession(s));
+  db.active=null; save();
+  view.finished = Object.assign({pb}, db.sessions[db.sessions.length-1]);
+  buzz([30,60,30,60,60]);
+  render();
+}
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function buzz(p){ try{ navigator.vibrate && navigator.vibrate(p); }catch(e){} }
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),1800); }
+function isIOS(){ return /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1); }
+function isStandalone(){ return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone===true; }
+
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{ view.screen=b.dataset.nav; view.armDel=null; render(); }));
+$('#today').textContent = new Date().toLocaleDateString(undefined,{weekday:'short', month:'short', day:'numeric'});
+render();
+
+if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){
+  window.addEventListener('load', ()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+})();
+</script>
+</body>
+</html>
