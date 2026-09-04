@@ -10,5 +10,5 @@ home-screen app (PWA), works offline, keeps everything in the browser's local st
 - **Lag Ladder** – from the cup end, lag out to each line, three balls each. Dead on = 3, just short or long = 1. Perfect is 36.
 
 ## Run it
-Serve this folder over HTTPS (GitHub Pages works). Open it in Safari or Chrome, then
+Live at https://smartsoil-media.github.io/blackJack/putting-mat/ via GitHub Pages. Open it in Safari or Chrome, then
 "Add to Home Screen". Files: `index.html` (app), `manifest.webmanifest`, `sw.js`, `icons/`.
