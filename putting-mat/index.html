@@ -91,7 +91,8 @@ h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.02em;margin:
 .mat .mark span{position:absolute;left:0;top:100%;transform:translateX(-50%);margin-top:6px;font-family:var(--display);font-size:13px;color:var(--muted);transition:color .2s,text-shadow .2s}
 .mat .mark.hot span{color:var(--cyan);text-shadow:0 0 10px rgba(45,244,255,.8)}
 .mat .mark.hot i,.mat .mark.hot b{background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
-.mat .tee{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-family:var(--display);font-size:9px;letter-spacing:.2em;color:rgba(184,255,60,.5)}
+.mat .mark.tee::before{content:"";position:absolute;top:8px;bottom:8px;left:-9px;width:22px;border:1.5px solid rgba(240,245,240,.35);border-left:0;border-radius:0 6px 6px 0}
+.mat .mark.tee.hot::before{border-color:rgba(45,244,255,.6)}
 .mat .ball{position:absolute;top:50%;width:16px;height:16px;border-radius:50%;transform:translate(-50%,-50%);
   background:radial-gradient(circle at 35% 35%,#fff,#d9e2ff 60%,#9fb0e0);
   box-shadow:0 0 0 2px rgba(255,255,255,.25),0 0 14px 4px rgba(255,255,255,.55),0 6px 10px -4px rgba(0,0,0,.8);
@@ -99,8 +100,8 @@ h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.02em;margin:
 .mat .ball.lag{box-shadow:0 0 0 2px rgba(255,255,255,.25),0 0 14px 4px rgba(255,194,71,.6)}
 .mat .arrow{position:absolute;top:50%;height:2px;transform:translateY(-50%);
   background:repeating-linear-gradient(90deg,var(--amber) 0 6px,transparent 6px 12px);opacity:.75;pointer-events:none}
-.mat .arrow::before{content:"";position:absolute;left:-1px;top:50%;width:0;height:0;transform:translateY(-50%);
-  border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:8px solid var(--amber)}
+.mat .arrow::before{content:"";position:absolute;right:-1px;top:50%;width:0;height:0;transform:translateY(-50%);
+  border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid var(--amber)}
 .mat-legend{display:flex;justify-content:space-between;padding:26px 6px 0;font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
 @media (prefers-reduced-motion:reduce){.mat .ball{transition:none}}
 
@@ -264,13 +265,13 @@ const $ = (s, el=document) => el.querySelector(s);
 
 const GAMES = {
   practice:{ name:'Free Practice', tag:'open', tagLabel:'Open',
-    blurb:'Pick a distance and a target. Hole or marker, as many balls as you like. Every putt feeds your stats.' },
+    blurb:'Pick a line and a target. Putt to the cup, or lag out from the cup end to the line. Every putt feeds your stats.' },
   ladder:{ name:'Ladder', tag:'hole', tagLabel:'To the hole',
     blurb:'Start at 2 ft. Make it and step back one line. Miss and step forward one. Hole the 8-footer to finish. Fewest putts wins.' },
   race21:{ name:'Race to 21', tag:'hole', tagLabel:'To the hole',
     blurb:'Rotate 2, 4, 6, 8. A make from 2 ft scores 1, 4 ft scores 2, 6 ft 3, 8 ft 4. Reach 21 in the fewest putts.' },
   lag:{ name:'Lag Ladder', tag:'lag', tagLabel:'To the markers',
-    blurb:'Three balls at each marker, 2 through 8. Stop it dead on the line for 3, just short or long for 1. 36 is perfect.' },
+    blurb:'From the cup end, lag out to each line: three balls at 2, 4, 6 and 8. Dead on the line scores 3, just short or long scores 1. 36 is perfect.' },
 };
 
 /* ---------- storage ---------- */
@@ -371,15 +372,16 @@ const fmtTime = t => new Date(t).toLocaleTimeString(undefined,{hour:'numeric', m
 const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 /* ball position along the mat, as a % from the left (cup at 5%, 8 ft mark at 80%) */
-const POS = {0:5, 2:23.75, 4:42.5, 6:61.25, 8:80};
+const POS = {0:6, 2:30, 4:53, 6:76, 8:93};
+const CUP_SIDE = 15; /* where the ball sits when lagging out from the cup end */
 function matHTML(dist, target){
-  const marks = DIST.map(d=>`<div class="mark ${d===dist?'hot':''}" style="left:${POS[d]}%"><i class="a"></i><b></b><i class="b"></i><span>${d}</span></div>`).join('');
-  const ballLeft = target==='marker' ? 92 : POS[dist];
-  const arrow = target==='marker' ? `<div class="arrow" style="left:${POS[dist]+1.5}%;width:${92-POS[dist]-3}%"></div>` : '';
+  const marks = DIST.map(d=>`<div class="mark ${d===dist?'hot':''} ${d===8?'tee':''}" style="left:${POS[d]}%"><i class="a"></i><b></b><i class="b"></i><span>${d}</span></div>`).join('');
+  const ballLeft = target==='marker' ? CUP_SIDE : POS[dist];
+  const arrow = target==='marker' ? `<div class="arrow" style="left:${CUP_SIDE+2.5}%;width:${POS[dist]-CUP_SIDE-4.5}%"></div>` : '';
   return `<div class="mat-wrap"><div class="mat">
-    <div class="cup"></div>${marks}${arrow}<span class="tee">VERVE</span>
+    <div class="cup"></div>${marks}${arrow}
     <div class="ball ${target==='marker'?'lag':''}" style="left:${ballLeft}%"></div>
-  </div><div class="mat-legend"><span>Cup</span><span>${target==='marker' ? 'Lag to the '+dist+' ft line' : dist+' ft to the cup'}</span><span>Tee</span></div></div>`;
+  </div><div class="mat-legend"><span>Cup</span><span>${target==='marker' ? 'Lag out to the '+dist+' ft line' : dist+' ft to the cup'}</span><span>Tee box</span></div></div>`;
 }
 
 function render(){
@@ -426,7 +428,7 @@ function liveHTML(s){
       <div class="chips"><button class="chip ${target==='hole'?'on':''}" data-act="target" data-t="hole">To the cup</button><button class="chip amber ${target==='marker'?'on':''}" data-act="target" data-t="marker">Lag to the line</button></div>`;
   }
   if(target==='marker'){
-    prompt = `<div class="big lagc">${st.dist} FT LINE</div><div class="sub">${s.type==='lag'?`Ball ${(st.n%3)+1} of 3 at this marker`:'Stop it dead on the line'}</div>`;
+    prompt = `<div class="big lagc">${st.dist} FT LINE</div><div class="sub">${s.type==='lag'?`Ball ${(st.n%3)+1} of 3 at this marker`:'From the cup end, stop it dead on the line'}</div>`;
   } else {
     prompt = `<div class="big">${st.dist} FT</div><div class="sub">${s.type==='ladder' ? (st.dist===8?'Hole this one to finish':'Make it to step back') : s.type==='race21' ? `Worth ${st.dist/2} point${st.dist>2?'s':''} · ${st.points} of 21` : 'To the cup'}</div>`;
   }

@@ -1,5 +1,5 @@
 /* Putt Lab service worker: app shell cached on install, fonts cached as they load. */
-const VERSION = 'puttlab-v1';
+const VERSION = 'puttlab-v2';
 const SHELL = [
   './', './index.html', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png'
